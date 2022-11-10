@@ -47,7 +47,8 @@ class TimerLayout(BoxLayout):
             self.buttonText = 'Start'
         else:
             self.buttonText = 'Reset'
-
+    def timeControl(self,amount):
+            self.timeLeft += amount
 class BasicTimerApp(App):
 
     def build(self):

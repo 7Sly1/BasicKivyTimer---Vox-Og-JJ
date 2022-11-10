@@ -6,6 +6,19 @@
 	    color: (0, 1, 0, 1)
 		text: root.timerText
 		font_size: self.height * 0.5
+	BoxLayout:
+	    Button:
+	        text: "+"
+	        font_size: self.height * 0.8
+	        on_release: root.timeControl(1)
+
+	    Button:
+	        text: "-"
+	        font_size: self.height * 0.8
+	        on_release: root.timeControl(-1)
+
+
+
 	Button:
 		text: root.buttonText
 		font_size: self.height * 0.3
