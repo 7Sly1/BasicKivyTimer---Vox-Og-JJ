@@ -60,5 +60,7 @@ class BasicTimerApp(App):
 
         return layout
 
+print(1)
+
 if __name__ in ('__main__', '__android__'):
     BasicTimerApp().run()
