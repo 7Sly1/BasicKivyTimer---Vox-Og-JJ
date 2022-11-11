@@ -1,0 +1,59 @@
+#:import kivy kivy
+
+WindowManager:
+    MainMenu:
+    PlayingScreen:
+    EndScreen:
+
+<MainMenu>:
+    name: "menu"
+
+    GridLayout:
+        rows: 4
+
+        GridLayout:
+            cols: 1
+
+            Label:
+                text: "Game name"
+
+        GridLayout:
+            cols: 1
+
+            Button:
+                text: "Start"
+                on_release: app.root.current = "playing"
+
+        GridLayout:
+            cols: 3
+
+            Button:
+                text: "-"
+                size_hint: 0.5, 1
+            Label:
+                text: "Runder"
+            Button:
+                text: "+"
+                size_hint: 0.5, 1
+
+        GridLayout:
+            cols: 3
+
+            Button:
+                text: "-"
+                size_hint: 0.5, 1
+                on_release: root.timeControl(-1)
+            Label:
+                text: root.timerText
+            Button:
+                text: "+"
+                size_hint: 0.5, 1
+                on_release: root.timeControl(1)
+
+<PlayingScreen>:
+    name: "playing"
+    Label:
+        text: "YOU ARE PLAYING HEHE"
+
+<EndScreen>:
+    name: "end"
