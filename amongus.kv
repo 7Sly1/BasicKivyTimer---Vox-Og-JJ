@@ -52,8 +52,19 @@ WindowManager:
 
 <PlayingScreen>:
     name: "playing"
-    Label:
-        text: "YOU ARE PLAYING HEHE"
+    on_enter: root.gameLoop()
+    GridLayout:
+        rows: 2
+
+        GridLayout:
+            cols: 2
+
+            Label:
+                text: "Thing to draw"
+            Label:
+                text: root.manager.get_screen("menu").timerText
+
+
 
 <EndScreen>:
     name: "end"
