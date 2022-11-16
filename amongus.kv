@@ -58,11 +58,24 @@ WindowManager:
 
         GridLayout:
             cols: 2
+            size: root.width * 0.8, root.height * 0.8
+            row_default_height: 30
+            row_force_default: True
+            center: root.width / 2, root.height / 2
 
             Label:
                 text: "Thing to draw"
             Label:
                 text: root.manager.get_screen("menu").timerText
+
+        GridLayout:
+            cols: 1
+
+            canvas:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    pos: (0, 0)
 
 
 
