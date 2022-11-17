@@ -1,9 +1,19 @@
 #:import kivy kivy
 
 WindowManager:
+    id: windowmanager
     MainMenu:
+        id: 'mainmenu'
+        name: "menu"
+        manager: windowmanager
     PlayingScreen:
+        id: 'playingscreen'
+        name: "playing"
+        manager: windowmanager
     EndScreen:
+        id: 'endscreen'
+        name: "end"
+        manager: windowmanager
 
 <MainMenu>:
     name: "menu"
@@ -16,12 +26,14 @@ WindowManager:
 
             Label:
                 text: "Game name"
+                font_size: self.height * 0.5
 
         GridLayout:
             cols: 1
 
             Button:
                 text: "Start"
+                font_size: self.height * 0.5
                 on_release: app.root.current = "playing"
 
         GridLayout:
@@ -29,29 +41,38 @@ WindowManager:
 
             Button:
                 text: "-"
+                font_size: self.height * 0.5
                 size_hint: 0.5, 1
+                on_release: root.roundControl(-1)
             Label:
-                text: "Runder"
+                text: root.roundText
+                font_size: self.height * 0.5
             Button:
                 text: "+"
+                font_size: self.height * 0.5
                 size_hint: 0.5, 1
+                on_release: root.roundControl(1)
 
         GridLayout:
             cols: 3
 
             Button:
                 text: "-"
+                font_size: self.height * 0.5
                 size_hint: 0.5, 1
                 on_release: root.timeControl(-1)
             Label:
                 text: root.timerText
+                font_size: self.height * 0.5
             Button:
                 text: "+"
+                font_size: self.height * 0.5
                 size_hint: 0.5, 1
                 on_release: root.timeControl(1)
 
 <PlayingScreen>:
     name: "playing"
+    on_pre_enter: root.updateValues()
     on_enter: root.gameLoop()
     GridLayout:
         rows: 2
@@ -66,7 +87,7 @@ WindowManager:
             Label:
                 text: "Thing to draw"
             Label:
-                text: root.manager.get_screen("menu").timerText
+                text: root.gameTimerText
 
         GridLayout:
             cols: 1
@@ -74,10 +95,11 @@ WindowManager:
             canvas:
                 Color:
                     rgba: (1, 1, 1, 1)
-                Rectangle:
-                    pos: (0, 0)
 
 
 
 <EndScreen>:
     name: "end"
+
+    Label:
+        text: "This is the end screen"

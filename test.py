@@ -1,13 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
-
-# Grafiske komponenter
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-
-# Properties til interaktion mellem python og kv
 from kivy.properties import StringProperty
+from kivy.graphics import Color, Ellipse, Line
 from kivy.clock import Clock
 import math
 
@@ -18,10 +12,12 @@ class WindowManager(ScreenManager):
 
 class MainMenu(Screen):
     startTime = 5
-    timerText = StringProperty(str(startTime))
+    timerText = StringProperty("Time: " + str(startTime))
     running = False
     expired = False
     timeLeft = startTime
+    rounds = 1
+    roundText = StringProperty("Rounds: " + str(rounds))
 
     # Skifter running til modsatte boolske vaerdi
     def toggle(self):
@@ -31,40 +27,47 @@ class MainMenu(Screen):
         else:
             self.running = not self.running
 
-    def update(self, dt):
-        if self.running:
-            self.timeLeft = self.timeLeft - dt
-        if self.timeLeft <= 0 and self.running:
-            self.toggle()
-            self.expired = True
+    def updateTimer(self, dt):
+        self.timerText = "Time: " + str(math.ceil(self.timeLeft))
 
-        self.timerText = str(math.ceil(self.timeLeft))
+    def updateRounds(self, dt):
+        self.roundText = "Rounds: " + str(math.ceil(self.rounds))
 
     def timeControl(self, amount):
         self.timeLeft += amount
-        if self.timeLeft < 0:
+        if self.timeLeft < 1:
             self.timeLeft += 1
-        self.update(1.0 / 30.0)
-        return self.timeLeft
+        self.updateTimer(1.0 / 30.0)
+        gameManager.timer = self.timeLeft
 
-    # TODO: Figure out how to transfer timeLeft from this class to another
-    # TODO: Seems like it takes the "default" value instead of the changed..
+    def roundControl(self, amount): # TODO: Make rounds actually do stuff
+        self.rounds += amount
+        if self.rounds < 1:
+            self.rounds += 1
+        self.updateRounds(1.0 / 30.0)
 
+
+class gameManager():
+    timer = MainMenu.timeLeft
 
 class PlayingScreen(Screen):
     # TODO: Game logic goes here
-    gameTimerText = MainMenu.timerText
-    gameTimer = MainMenu.timeLeft
+    gameTimer = 0
+    gameTimerText = StringProperty(str(gameTimer))
     running = False
     expired = False
+
+    def updateValues(self):
+        PlayingScreen.gameTimer = gameManager.timer
 
     def update(self, dt):
         if self.running:
             self.gameTimer = self.gameTimer - dt
         if self.gameTimer <= 0 and self.running:
-            print("UH OH YOU DONE!") # TODO: Change to end screen
+            print("UH OH YOU DONE!")
             self.running = False
             self.expired = True
+            self.manager.current = "end"
 
         self.gameTimerText = str(math.ceil(self.gameTimer))
 
@@ -72,6 +75,16 @@ class PlayingScreen(Screen):
         self.running = True
         Clock.schedule_interval(self.update, 1.0/30.0)
         return self
+
+    def on_touch_down(self, touch):
+        # Begynder en linje der hvor man klikker på canvas
+        with self.canvas:
+            Color(1, 1, 1)
+            touch.ud['line'] = Line(points=(touch.x, touch.y))
+
+    def on_touch_move(self, touch):
+        # Når man flytter musen trækker den stregen med musen fra klik punktet
+        touch.ud['line'].points += [touch.x, touch.y]
 
 
 class EndScreen(Screen):
