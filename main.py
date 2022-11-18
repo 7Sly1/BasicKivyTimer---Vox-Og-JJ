@@ -1,5 +1,5 @@
 from kivy.app import App
-
+from kivy.uix.screenmanager import ScreenManager, Screen
 # Grafiske komponenter
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -14,14 +14,19 @@ from kivy.clock import Clock
 # Python standard biblioteker
 import math
 
-class TimerLayout(BoxLayout):
+class WindowManager(ScreenManager):
+    pass
+
+class MainMenu(Screen):
     # Tekst paa knappen. Bundet via .kv. Bliver aendret i update.
-    timerText = StringProperty('Set time')
+    timerText = StringProperty('5')
     buttonText = StringProperty('Start timer')
-    running = False        # Nedtaellingen koerer hvis sand
+    running = False  # Nedtaellingen koerer hvis sand
     expired = False
-    startTime = 5          # Antal sekunder timeren starter på
-    timeLeft = startTime   # Antal sekunder tilbage i nedtaellingen
+    startTime = 5  # Antal sekunder timeren starter på
+    timeLeft = startTime  # Antal sekunder tilbage i nedtaellingen
+    rounds = 1
+    roundText = StringProperty("Rounds: " + str(rounds))
 
     # Skifter running til modsatte boolske vaerdi
     def toggle(self):
@@ -41,31 +46,30 @@ class TimerLayout(BoxLayout):
 
         self.timerText = str(math.ceil(self.timeLeft))
 
-        if self.running and not self.expired:
-            self.buttonText = 'Stop'
-        elif not self.running and not self.expired:
-            self.buttonText = 'Start'
-        else:
-            self.buttonText = 'Reset'
+    def roundUpdate(self,dt):
+        self.roundText = str(math.ceil(self.rounds))
 
-    def timeControl(self,amount):
-            self.timeLeft += amount
 
+    def timeControl(self, amount):
+        self.timeLeft += amount
+        self.update(1.0 / 30.0)
+
+    def roundCount(self, amount):
+        self.rounds += amount
+        self.updateRounds(1.0 / 30.0)
+
+
+class PlayingScreen(Screen):
+    pass
+class EndScreen(Screen):
+    pass
 
 
 
 class BasicTimerApp(App):
 
     def build(self):
-        # Initialiser knappen
-        layout = TimerLayout()
-
-        # Bed Kivy om at kalde update() 30 gange pr. sekund
-        Clock.schedule_interval(layout.update, 1.0/30.0)
-
-        return layout
-
-print(1)
+        return
 
 if __name__ in ('__main__', '__android__'):
     BasicTimerApp().run()
