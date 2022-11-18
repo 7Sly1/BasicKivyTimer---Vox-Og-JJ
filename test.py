@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import StringProperty
-from kivy.graphics import Color, Ellipse, Line
+from kivy.graphics import Color, Line
 from kivy.clock import Clock
 import math
 
@@ -64,7 +64,6 @@ class PlayingScreen(Screen):
         if self.running:
             self.gameTimer = self.gameTimer - dt
         if self.gameTimer <= 0 and self.running:
-            print("UH OH YOU DONE!")
             self.running = False
             self.expired = True
             self.manager.current = "end"
@@ -74,7 +73,6 @@ class PlayingScreen(Screen):
     def gameLoop(self):
         self.running = True
         Clock.schedule_interval(self.update, 1.0/30.0)
-        return self
 
     def on_touch_down(self, touch):
         # Begynder en linje der hvor man klikker på canvas
