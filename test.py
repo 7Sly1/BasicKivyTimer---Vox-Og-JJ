@@ -45,10 +45,12 @@ class MainMenu(Screen):
         if self.rounds < 1:
             self.rounds += 1
         self.updateRounds(1.0 / 30.0)
+        gameManager.rounds = self.rounds
 
 
 class gameManager():
     timer = MainMenu.timeLeft
+    rounds = MainMenu.rounds
 
 class PlayingScreen(Screen):
     # TODO: Game logic goes here
@@ -56,6 +58,7 @@ class PlayingScreen(Screen):
     gameTimerText = StringProperty(str(gameTimer))
     running = False
     expired = False
+    gameManager.rounds -= 1
 
     def updateValues(self):
         PlayingScreen.gameTimer = gameManager.timer
@@ -86,9 +89,20 @@ class PlayingScreen(Screen):
 
 
 class EndScreen(Screen):
-    # TODO: End screen logic goes here
-    pass
-
+    # Handles logic for the end screen
+    if gameManager.rounds > 0: # TODO: Fix
+        endButtonText = StringProperty("Next Round")
+    else:
+        endButtonText = StringProperty("Exit")
+    # TODO: See if this if logic can be simplified
+    def endButton(self):
+        if gameManager.rounds > 0:
+            self.manager.current = "playing"
+        else:
+            exit()
+            
+# TODO: Store time values in manager to carry over for more rounds
+# TODO: Clear canvas when calling playing screen again
 
 class AmongUsApp(App):
     def build(self):
