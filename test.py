@@ -4,6 +4,7 @@ from kivy.properties import StringProperty
 from kivy.graphics import Color, Line
 from kivy.clock import Clock
 import math
+from random import randint
 
 
 class WindowManager(ScreenManager):
@@ -40,7 +41,7 @@ class MainMenu(Screen):
         self.updateTimer(1.0 / 30.0)
         gameManager.timer = self.timeLeft
 
-    def roundControl(self, amount): # TODO: Make rounds actually do stuff
+    def roundControl(self, amount):
         self.rounds += amount
         if self.rounds < 1:
             self.rounds += 1
@@ -58,10 +59,19 @@ class PlayingScreen(Screen):
     gameTimerText = StringProperty(str(gameTimer))
     running = False
     expired = False
-    gameManager.rounds -= 1
+    objectiveText = StringProperty("")
+
+    def getObjective(self):
+        possible = ['Monkey', 'Cat', 'Bike', 'Car', 'Dog', 'House', 'Lightbulb']
+        objID = randint(0, len(possible)-1)
+        return possible[objID]
+
 
     def updateValues(self):
-        PlayingScreen.gameTimer = gameManager.timer
+        gameManager.rounds -= 1
+        self.gameTimer = gameManager.timer
+        self.objectiveText = self.getObjective()
+        #self.canvas.clear() # TODO: Fix clearing canvas. Don't want everything gone...
 
     def update(self, dt):
         if self.running:
@@ -69,6 +79,7 @@ class PlayingScreen(Screen):
         if self.gameTimer <= 0 and self.running:
             self.running = False
             self.expired = True
+            Clock.unschedule(self.update)
             self.manager.current = "end"
 
         self.gameTimerText = str(math.ceil(self.gameTimer))
@@ -90,19 +101,21 @@ class PlayingScreen(Screen):
 
 class EndScreen(Screen):
     # Handles logic for the end screen
-    if gameManager.rounds > 0: # TODO: Fix
-        endButtonText = StringProperty("Next Round")
-    else:
-        endButtonText = StringProperty("Exit")
-    # TODO: See if this if logic can be simplified
+    endButtonText = StringProperty("")
+
+
+    def updateText(self):
+        if gameManager.rounds > 0:
+            self.endButtonText = "Next Round"
+        else:
+            self.endButtonText = "Exit"
+
     def endButton(self):
         if gameManager.rounds > 0:
             self.manager.current = "playing"
         else:
             exit()
-            
-# TODO: Store time values in manager to carry over for more rounds
-# TODO: Clear canvas when calling playing screen again
+
 
 class AmongUsApp(App):
     def build(self):

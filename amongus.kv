@@ -85,7 +85,7 @@ WindowManager:
             center: root.width / 2, root.height / 2
 
             Label:
-                text: "Thing to draw"
+                text: root.objectiveText
             Label:
                 text: root.gameTimerText
 
@@ -100,6 +100,7 @@ WindowManager:
 
 <EndScreen>:
     name: "end"
+    on_pre_enter: root.updateText()
 
     Label:
         text: "This is the end screen"
