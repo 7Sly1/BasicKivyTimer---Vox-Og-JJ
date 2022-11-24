@@ -25,7 +25,7 @@ WindowManager:
             cols: 1
 
             Label:
-                text: "Game name"
+                text: "Speed Draw"
                 font_size: self.height * 0.5
 
         GridLayout:
@@ -70,6 +70,7 @@ WindowManager:
                 size_hint: 0.5, 1
                 on_release: root.timeControl(1)
 
+
 <PlayingScreen>:
     name: "playing"
     on_pre_enter: root.updateValues()
@@ -95,7 +96,6 @@ WindowManager:
             canvas:
                 Color:
                     rgba: (1, 1, 1, 1)
-
 
 
 <EndScreen>:

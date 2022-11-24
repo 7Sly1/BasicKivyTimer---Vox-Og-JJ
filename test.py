@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import StringProperty
-from kivy.graphics import Color, Line
+from kivy.graphics import Color, Line, InstructionGroup
 from kivy.clock import Clock
 import math
 from random import randint
@@ -53,6 +53,7 @@ class gameManager():
     timer = MainMenu.timeLeft
     rounds = MainMenu.rounds
 
+
 class PlayingScreen(Screen):
     # TODO: Game logic goes here
     gameTimer = 0
@@ -60,18 +61,20 @@ class PlayingScreen(Screen):
     running = False
     expired = False
     objectiveText = StringProperty("")
+    toRemove = []
+    objects = []
+    drawing = False
 
     def getObjective(self):
         possible = ['Monkey', 'Cat', 'Bike', 'Car', 'Dog', 'House', 'Lightbulb']
-        objID = randint(0, len(possible)-1)
+        objID = randint(0, len(possible) - 1)
         return possible[objID]
-
 
     def updateValues(self):
         gameManager.rounds -= 1
         self.gameTimer = gameManager.timer
         self.objectiveText = self.getObjective()
-        #self.canvas.clear() # TODO: Fix clearing canvas. Don't want everything gone...
+        # s # TODO: Fix clearing canvas. Don't want everything gone...
 
     def update(self, dt):
         if self.running:
@@ -80,29 +83,48 @@ class PlayingScreen(Screen):
             self.running = False
             self.expired = True
             Clock.unschedule(self.update)
+            self.removeLines()
             self.manager.current = "end"
 
         self.gameTimerText = str(math.ceil(self.gameTimer))
 
     def gameLoop(self):
         self.running = True
-        Clock.schedule_interval(self.update, 1.0/30.0)
+        Clock.schedule_interval(self.update, 1.0 / 30.0)
 
-    def on_touch_down(self, touch):
-        # Begynder en linje der hvor man klikker på canvas
-        with self.canvas:
-            Color(1, 1, 1)
-            touch.ud['line'] = Line(points=(touch.x, touch.y))
+    def on_touch_up(self, touch):
+        self.drawing = False
 
     def on_touch_move(self, touch):
-        # Når man flytter musen trækker den stregen med musen fra klik punktet
-        touch.ud['line'].points += [touch.x, touch.y]
+        if self.drawing:
+            self.points.append(touch.pos)
+            self.obj.children[-1].points = self.points
+        else:
+            self.drawing = True
+            self.points = [touch.pos]
+            # We create a "group" (Basically just a list but Kivy edition) for our instructions to store them
+            self.obj = InstructionGroup()
+            # We add the line and color to the group
+            self.obj.add(Color(1, 1, 1, 1))
+            self.obj.add(Line())
+            # We append the instruction to a normal list
+            self.objects.append(self.obj)
+            # We finally add the instruction to the actual canvas and draw it.
+            self.canvas.add(self.obj)
+
+    def removeLines(self)  # TODO: Integrate end screen showing drawing thing. So might wanna move this call
+        # Loops through all of our instructions
+        for i in range(0, len(self.objects)):
+            item = self.objects.pop(-1)
+            self.toRemove.append(item)
+            # We remove the instruction from the canvas to clear it without removing all of our layout.
+            self.canvas.remove(item)
 
 
 class EndScreen(Screen):
     # Handles logic for the end screen
-    endButtonText = StringProperty("")
 
+    endButtonText = StringProperty("")
 
     def updateText(self):
         if gameManager.rounds > 0:
