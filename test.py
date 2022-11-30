@@ -52,6 +52,7 @@ class MainMenu(Screen):
 class gameManager():
     timer = MainMenu.timeLeft
     rounds = MainMenu.rounds
+    objective = ""
 
 
 class PlayingScreen(Screen):
@@ -68,13 +69,13 @@ class PlayingScreen(Screen):
     def getObjective(self):
         possible = ['Monkey', 'Cat', 'Bike', 'Car', 'Dog', 'House', 'Lightbulb']
         objID = randint(0, len(possible) - 1)
+        gameManager.objective = possible[objID]
         return possible[objID]
 
     def updateValues(self):
         gameManager.rounds -= 1
         self.gameTimer = gameManager.timer
         self.objectiveText = self.getObjective()
-        # s # TODO: Fix clearing canvas. Don't want everything gone...
 
     def update(self, dt):
         if self.running:
@@ -112,7 +113,7 @@ class PlayingScreen(Screen):
             # We finally add the instruction to the actual canvas and draw it.
             self.canvas.add(self.obj)
 
-    def removeLines(self)  # TODO: Integrate end screen showing drawing thing. So might wanna move this call
+    def removeLines(self):
         # Loops through all of our instructions
         for i in range(0, len(self.objects)):
             item = self.objects.pop(-1)
@@ -125,8 +126,10 @@ class EndScreen(Screen):
     # Handles logic for the end screen
 
     endButtonText = StringProperty("")
+    objectiveText = StringProperty("")
 
     def updateText(self):
+        self.objectiveText = gameManager.objective
         if gameManager.rounds > 0:
             self.endButtonText = "Next Round"
         else:
@@ -139,10 +142,10 @@ class EndScreen(Screen):
             exit()
 
 
-class AmongUsApp(App):
+class SpeedDrawApp(App):
     def build(self):
         return
 
 
 if __name__ in ('__main__', '__android__'):
-    AmongUsApp().run()
+    SpeedDrawApp().run()
