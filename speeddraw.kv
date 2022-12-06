@@ -101,10 +101,14 @@ WindowManager:
 <EndScreen>:
     name: "end"
     on_pre_enter: root.updateText()
+    on_enter: root.nextScreen()
 
-    Label:
-        text: "This is the end screen"
+    GridLayout:
+        rows: 1
 
-    Button:
-        text: root.endButtonText
-        on_release: root.endButton()
+        GridLayout:
+            cols: 1
+
+            Image:
+                id: imageView
+                source: 'Drawing.png'

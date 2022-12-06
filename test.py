@@ -5,6 +5,8 @@ from kivy.graphics import Color, Line, InstructionGroup
 from kivy.clock import Clock
 import math
 from random import randint
+from time import sleep
+from os import remove
 
 
 class WindowManager(ScreenManager):
@@ -115,6 +117,7 @@ class PlayingScreen(Screen):
 
     def removeLines(self):
         # Loops through all of our instructions
+        self.export_to_png("Drawing.png")
         for i in range(0, len(self.objects)):
             item = self.objects.pop(-1)
             self.toRemove.append(item)
@@ -129,16 +132,15 @@ class EndScreen(Screen):
     objectiveText = StringProperty("")
 
     def updateText(self):
+        self.ids.imageView.reload()
         self.objectiveText = gameManager.objective
-        if gameManager.rounds > 0:
-            self.endButtonText = "Next Round"
-        else:
-            self.endButtonText = "Exit"
 
-    def endButton(self):
+    def nextScreen(self):
+        sleep(5)
         if gameManager.rounds > 0:
             self.manager.current = "playing"
         else:
+            remove('Drawing.png')
             exit()
 
 
