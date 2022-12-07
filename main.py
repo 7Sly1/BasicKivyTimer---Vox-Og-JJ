@@ -69,7 +69,6 @@ class PlayingScreen(Screen):
     running = False
     expired = False
     objectiveText = StringProperty("")
-    toRemove = []
     objects = []
     drawing = False
 
@@ -136,7 +135,6 @@ class PlayingScreen(Screen):
         # Loops through all of our instructions
         for i in range(0, len(self.objects)):
             item = self.objects.pop(-1)
-            self.toRemove.append(item)
             # We remove the instruction from the canvas to clear it without removing all of our layout.
             self.canvas.remove(item)
 
